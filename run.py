@@ -30,6 +30,8 @@ if __name__ == '__main__':
 
     # Initialise user features and item features:
     user_init, item_init = init_MF(ratings, num_features)
+    
+    # Run Grid Search on lambdas_user and lambdas_item 
     for x,lambda_u in enumerate(lambdas_user):
         for y,lambda_i in enumerate(lambdas_item):
             print("K = {}, lambda_u = {}, lambda_i = {}".format(num_features, lambda_u, lambda_i))
@@ -43,12 +45,12 @@ if __name__ == '__main__':
                 best_user_feats = np.copy(user_features)
                 best_item_feats = np.copy(item_features)
                 
-    print("Computing predictions with min loss being: {}".format(min_loss))
-    # Compute with best features matrices predictions
+    print("Computing predictions with min test loss being: {}".format(min_loss))
+    # Compute predictions with best features matrices
     predictions =  predictionsWithBias(best_item_feats, best_user_feats, bias_u_train, bias_i_train, mean)
     
     # Set predictions above 5 (below 1) to 5 (1)
-    predictions[ np.where( predictions > 5.0 ) ] = 5.0
+    predictions[ np.where(predictions > 5.0)] = 5.0
     predictions[ np.where(predictions < 1.0)] = 1.0
     
     # Convert matrix of predictions to array of the wanted ones
