@@ -5,6 +5,8 @@ import scipy
 import scipy.io
 import scipy.sparse as sp
 
+### Check the README.md for more details, especially on parameters of the functions
+
 """Pre process"""
 def read_txt(path):
     """read text file from path."""
@@ -105,7 +107,7 @@ def create_csv_submission(ids, pred, name):
     """
     Creates an output file in csv format for submission to kaggle
     Arguments: ids (event ids associated with each prediction)
-               y_pred (predicted class labels)
+               pred (prediction of ratings)
                name (string name of .csv output file to be created)
     """
     ids_for_submission = convert_ids_for_submission(ids)

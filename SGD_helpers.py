@@ -1,9 +1,10 @@
 import numpy as np
 import scipy.sparse as sp
 
+### Check the README.md for more details, especially on parameters of the functions
+
 def init_MF(train, num_features):
     """Create the 2 features matrix: user_features, item_features given the matrix of ratings and the number of features"""
-        
     num_item, num_user = train.get_shape()
     # All elements are random and in the interval [0, 1/num_features] 
     user_features = np.random.rand(num_features, num_user)/num_features
@@ -21,7 +22,7 @@ def compute_error(data, user_features, item_features, nz):
     return np.sqrt(1.0 * mse / len(nz))
 
 def matrix_factorization_SGD(train, test, gamma, num_features, lambda_user, lambda_item, num_epochs,
-                             user_features, item_features, include_test = True):
+                             user_feat, item_feat, include_test = True):
     """matrix factorization by SGD. include_test set to False if we want to train on the whole ratings matrix, thus we have no test"""
     # set seed
     np.random.seed(988)
@@ -34,8 +35,12 @@ def matrix_factorization_SGD(train, test, gamma, num_features, lambda_user, lamb
     if(include_test):
         nz_row, nz_col = test.nonzero()
         nz_test = list(zip(nz_row, nz_col))
-
-    print("Learn the matrix factorization using SGD with K = {}, lambda_i = {}, lambda_u = {}".format(num_features, lambda_item, lambda_user))
+        
+    # make copy of user_features and item_features matrices and modify the copies    
+    user_features = np.copy(user_feat)
+    item_features = np.copy(item_feat)
+    print("Learn the matrix factorization using SGD with K = {}, lambda_i = {}, lambda_u = {}, num_epochs = {}".format(num_features, lambda_item, lambda_user, num_epochs))
+    
     for it in range(num_epochs):        
         # shuffle the training rating indices
         np.random.shuffle(nz_train)
@@ -53,7 +58,7 @@ def matrix_factorization_SGD(train, test, gamma, num_features, lambda_user, lamb
             user_features[:, n] += gamma * (err * item_info - lambda_user * user_info)
             
         rmse = compute_error(train, user_features, item_features, nz_train)
-        if(it % 5 == 0):
+        if(it % 5 == 0 or it == num_epochs - 1):
             print("iter: {}, RMSE on training set: {}.".format(it, rmse))
 
     # evaluate the test error

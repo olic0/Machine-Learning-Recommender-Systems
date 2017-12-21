@@ -1,6 +1,8 @@
 import numpy as np
 import scipy.sparse as sp
 
+### Check the README.md for more details, especially on parameters of the functions
+
 # ratings is matrix of dimension: items x users
 def computeBiasMatrix(ratings):
     """Compute the bias matrix of same dimension as the ratings matrix
@@ -20,6 +22,7 @@ def computeBiasMatrix(ratings):
         nz_users[user] += 1
         nz_items[item] += 1
     
+    # Weird shape of mean_users when computing np.sum on axis with sparse matrix
     mean_users = np.sum(ratings, axis = 0)
     mean_users = [mean_users[0, i] for i in range(num_users)]/nz_users
     mean_items = np.sum(ratings, axis = 1)
@@ -44,5 +47,4 @@ def predictionsWithBias(item_features, user_features, bias_u, bias_i, mean_ratin
     mean_matrix = np.ones((num_items, num_users)) * mean_rating
     
     predictionsBiased = mean_matrix + biasU + biasI + preds_matrix
-    print(np.shape(predictionsBiased))
     return predictionsBiased
